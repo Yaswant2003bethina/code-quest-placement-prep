@@ -1,3 +1,4 @@
+import { TestCase } from '../types/problem';
 
 interface ExecutionResult {
   output?: string;
