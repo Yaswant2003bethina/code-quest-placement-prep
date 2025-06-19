@@ -48,14 +48,14 @@ const mockProblems = [
 
 export default function Problems() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [difficultyFilter, setDifficultyFilter] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('');
+  const [difficultyFilter, setDifficultyFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
 
   const filteredProblems = mockProblems.filter(problem => {
     const matchesSearch = problem.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          problem.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesDifficulty = !difficultyFilter || problem.difficulty === difficultyFilter;
-    const matchesCategory = !categoryFilter || problem.category === categoryFilter;
+    const matchesDifficulty = difficultyFilter === 'all' || problem.difficulty === difficultyFilter;
+    const matchesCategory = categoryFilter === 'all' || problem.category === categoryFilter;
     
     return matchesSearch && matchesDifficulty && matchesCategory;
   });
@@ -101,7 +101,7 @@ export default function Problems() {
               <SelectValue placeholder="All Difficulties" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Difficulties</SelectItem>
+              <SelectItem value="all">All Difficulties</SelectItem>
               <SelectItem value="Easy">Easy</SelectItem>
               <SelectItem value="Medium">Medium</SelectItem>
               <SelectItem value="Hard">Hard</SelectItem>
@@ -113,7 +113,7 @@ export default function Problems() {
               <SelectValue placeholder="All Categories" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Categories</SelectItem>
+              <SelectItem value="all">All Categories</SelectItem>
               <SelectItem value="Array">Array</SelectItem>
               <SelectItem value="String">String</SelectItem>
               <SelectItem value="Linked List">Linked List</SelectItem>
