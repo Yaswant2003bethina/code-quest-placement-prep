@@ -1,0 +1,217 @@
+
+{% extends "base.html" %}
+
+{% block title %}Register - CodePlace{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-background">
+        <div class="code-pattern"></div>
+    </div>
+    
+    <div class="auth-wrapper">
+        <div class="auth-card register-card">
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <h1>Join CodePlace</h1>
+                <p>Start your placement preparation journey</p>
+            </div>
+            
+            <form method="POST" class="auth-form" id="registerForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="first_name">First Name</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="first_name" name="first_name" required 
+                                   placeholder="First name">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="last_name">Last Name</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="last_name" name="last_name" required 
+                                   placeholder="Last name">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="email" name="email" required 
+                               placeholder="Enter your email">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" name="password" required 
+                               placeholder="Create a strong password">
+                        <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="password-strength" id="passwordStrength"></div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="roll_number">Roll Number</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-id-badge"></i>
+                            <input type="text" id="roll_number" name="roll_number" 
+                                   placeholder="Your roll number">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="department">Department</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-graduation-cap"></i>
+                            <select id="department" name="department">
+                                <option value="">Select Department</option>
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="Information Technology">Information Technology</option>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Mechanical">Mechanical</option>
+                                <option value="Civil">Civil</option>
+                                <option value="Electrical">Electrical</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="year">Year</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-calendar"></i>
+                            <select id="year" name="year">
+                                <option value="">Select Year</option>
+                                <option value="1">1st Year</option>
+                                <option value="2">2nd Year</option>
+                                <option value="3">3rd Year</option>
+                                <option value="4">4th Year</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone_number">Phone Number</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-phone"></i>
+                            <input type="tel" id="phone_number" name="phone_number" 
+                                   placeholder="Your phone number">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="terms" required>
+                        <span class="checkmark"></span>
+                        I agree to the <a href="#" target="_blank">Terms of Service</a> and <a href="#" target="_blank">Privacy Policy</a>
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-full">
+                    <i class="fas fa-user-plus"></i>
+                    Create Account
+                </button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Already have an account? <a href="{{ url_for('login') }}">Sign in here</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function togglePassword(inputId) {
+    const input = document.getElementById(inputId);
+    const icon = input.nextElementSibling.querySelector('i');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+
+// Password strength indicator
+document.getElementById('password').addEventListener('input', function() {
+    const password = this.value;
+    const strengthIndicator = document.getElementById('passwordStrength');
+    
+    let strength = 0;
+    let feedback = [];
+    
+    if (password.length >= 8) strength++;
+    else feedback.push('At least 8 characters');
+    
+    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+    else feedback.push('Upper & lowercase letters');
+    
+    if (/\d/.test(password)) strength++;
+    else feedback.push('At least one number');
+    
+    if (/[!@#$%^&*]/.test(password)) strength++;
+    else feedback.push('Special character');
+    
+    const strengthLevels = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'];
+    const strengthColors = ['#ff4757', '#ff6b7a', '#ffa502', '#2ed573', '#1e90ff'];
+    
+    strengthIndicator.innerHTML = `
+        <div class="strength-bar">
+            <div class="strength-fill" style="width: ${(strength/4)*100}%; background-color: ${strengthColors[strength]}"></div>
+        </div>
+        <div class="strength-text" style="color: ${strengthColors[strength]}">
+            ${strengthLevels[strength]} ${feedback.length ? '- ' + feedback.join(', ') : ''}
+        </div>
+    `;
+});
+
+// Form validation
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+    const requiredFields = ['first_name', 'last_name', 'email', 'password'];
+    const terms = document.querySelector('input[name="terms"]');
+    
+    let hasErrors = false;
+    
+    requiredFields.forEach(field => {
+        const input = document.getElementById(field);
+        if (!input.value.trim()) {
+            hasErrors = true;
+            input.classList.add('error');
+        } else {
+            input.classList.remove('error');
+        }
+    });
+    
+    if (!terms.checked) {
+        hasErrors = true;
+        showFlashMessage('Please accept the terms and conditions', 'error');
+    }
+    
+    if (hasErrors) {
+        e.preventDefault();
+    }
+});
+</script>
+{% endblock %}

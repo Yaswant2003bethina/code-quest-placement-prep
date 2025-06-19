@@ -1,0 +1,239 @@
+
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard - CodePlace{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <div class="container">
+            <div class="dashboard-title">
+                <h1>Welcome back, {{ session.name }}!</h1>
+                <p>Track your progress and continue your coding journey</p>
+            </div>
+            <div class="dashboard-actions">
+                <a href="{{ url_for('problems') }}" class="btn btn-primary">
+                    <i class="fas fa-code"></i>
+                    Solve Problems
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="dashboard-grid">
+            <!-- Stats Cards -->
+            <div class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card solved">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ stats.solved_problems }}</div>
+                            <div class="stat-label">Problems Solved</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card submissions">
+                        <div class="stat-icon">
+                            <i class="fas fa-paper-plane"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ stats.total_submissions }}</div>
+                            <div class="stat-label">Total Submissions</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card streak">
+                        <div class="stat-icon">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">7</div>
+                            <div class="stat-label">Day Streak</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card rank">
+                        <div class="stat-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">#42</div>
+                            <div class="stat-label">Global Rank</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Progress Chart -->
+            <div class="progress-section">
+                <div class="section-card">
+                    <div class="card-header">
+                        <h3>Weekly Progress</h3>
+                        <div class="progress-legend">
+                            <span class="legend-item solved"><span class="dot"></span>Solved</span>
+                            <span class="legend-item attempted"><span class="dot"></span>Attempted</span>
+                        </div>
+                    </div>
+                    <div class="progress-chart">
+                        <canvas id="progressChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="activity-section">
+                <div class="section-card">
+                    <div class="card-header">
+                        <h3>Recent Submissions</h3>
+                        <a href="#" class="view-all">View All</a>
+                    </div>
+                    <div class="activity-list">
+                        {% if stats.recent_submissions %}
+                            {% for submission in stats.recent_submissions %}
+                            <div class="activity-item">
+                                <div class="activity-icon status-{{ submission.status.lower().replace(' ', '-') }}">
+                                    <i class="fas fa-{{ 'check' if submission.status == 'Accepted' else 'times' }}"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">{{ submission.title }}</div>
+                                    <div class="activity-meta">
+                                        <span class="status status-{{ submission.status.lower().replace(' ', '-') }}">
+                                            {{ submission.status }}
+                                        </span>
+                                        <span class="time">{{ submission.submitted_at.strftime('%b %d, %Y') }}</span>
+                                    </div>
+                                </div>
+                                <div class="activity-score">
+                                    <span class="score">{{ submission.score }}pts</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-state">
+                                <i class="fas fa-code"></i>
+                                <h4>No submissions yet</h4>
+                                <p>Start solving problems to see your activity here</p>
+                                <a href="{{ url_for('problems') }}" class="btn btn-primary btn-small">
+                                    Browse Problems
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Problem Categories -->
+            <div class="categories-section">
+                <div class="section-card">
+                    <div class="card-header">
+                        <h3>Problem Categories</h3>
+                    </div>
+                    <div class="categories-grid">
+                        <div class="category-card">
+                            <div class="category-icon">
+                                <i class="fas fa-list"></i>
+                            </div>
+                            <div class="category-content">
+                                <h4>Array</h4>
+                                <p>15 problems</p>
+                                <div class="category-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 60%"></div>
+                                    </div>
+                                    <span>9/15 solved</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="category-card">
+                            <div class="category-icon">
+                                <i class="fas fa-project-diagram"></i>
+                            </div>
+                            <div class="category-content">
+                                <h4>Dynamic Programming</h4>
+                                <p>12 problems</p>
+                                <div class="category-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 25%"></div>
+                                    </div>
+                                    <span>3/12 solved</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="category-card">
+                            <div class="category-icon">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div class="category-content">
+                                <h4>Search</h4>
+                                <p>8 problems</p>
+                                <div class="category-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 87%"></div>
+                                    </div>
+                                    <span>7/8 solved</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Progress Chart
+const ctx = document.getElementById('progressChart').getContext('2d');
+const progressChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        datasets: [{
+            label: 'Problems Solved',
+            data: [2, 3, 1, 5, 2, 4, 3],
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            tension: 0.4,
+            fill: true
+        }, {
+            label: 'Problems Attempted',
+            data: [3, 5, 2, 7, 4, 6, 5],
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            tension: 0.4,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: 'rgba(0, 0, 0, 0.1)'
+                }
+            },
+            x: {
+                grid: {
+                    display: false
+                }
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

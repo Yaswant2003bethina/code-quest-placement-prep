@@ -1,0 +1,488 @@
+
+{% extends "base.html" %}
+
+{% block title %}{{ problem.title }} - CodePlace{% endblock %}
+
+{% block content %}
+<div class="problem-detail-container">
+    <div class="problem-layout">
+        <!-- Problem Description Panel -->
+        <div class="problem-panel">
+            <div class="problem-header">
+                <div class="problem-title-section">
+                    <h1>{{ problem.title }}</h1>
+                    <div class="problem-meta">
+                        <span class="difficulty difficulty-{{ problem.difficulty.lower() }}">
+                            <i class="fas fa-circle"></i>
+                            {{ problem.difficulty }}
+                        </span>
+                        {% if problem.category %}
+                            <span class="category">
+                                <i class="fas fa-tag"></i>
+                                {{ problem.category }}
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="problem-actions">
+                    <button class="btn btn-icon" title="Like">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <button class="btn btn-icon" title="Share">
+                        <i class="fas fa-share"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="problem-content">
+                <div class="problem-tabs">
+                    <button class="tab-btn active" onclick="showTab('description')">
+                        <i class="fas fa-file-text"></i>
+                        Description
+                    </button>
+                    <button class="tab-btn" onclick="showTab('submissions')">
+                        <i class="fas fa-history"></i>
+                        Submissions ({{ submissions|length }})
+                    </button>
+                    <button class="tab-btn" onclick="showTab('solutions')">
+                        <i class="fas fa-lightbulb"></i>
+                        Solutions
+                    </button>
+                </div>
+                
+                <!-- Description Tab -->
+                <div id="description-tab" class="tab-content active">
+                    <div class="problem-description">
+                        {{ problem.description|nl2br }}
+                    </div>
+                    
+                    {% if problem.input_format %}
+                    <div class="problem-section">
+                        <h3>Input Format</h3>
+                        <div class="format-text">{{ problem.input_format }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if problem.output_format %}
+                    <div class="problem-section">
+                        <h3>Output Format</h3>
+                        <div class="format-text">{{ problem.output_format }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if problem.sample_input and problem.sample_output %}
+                    <div class="problem-section">
+                        <h3>Sample Input/Output</h3>
+                        <div class="sample-container">
+                            <div class="sample-box">
+                                <h4>Input</h4>
+                                <pre class="sample-code">{{ problem.sample_input }}</pre>
+                            </div>
+                            <div class="sample-box">
+                                <h4>Output</h4>
+                                <pre class="sample-code">{{ problem.sample_output }}</pre>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if problem.tags %}
+                    <div class="problem-section">
+                        <h3>Tags</h3>
+                        <div class="problem-tags">
+                            {% for tag in problem.tags.split(',') %}
+                                <span class="tag">{{ tag.strip() }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Submissions Tab -->
+                <div id="submissions-tab" class="tab-content">
+                    <div class="submissions-list">
+                        {% if submissions %}
+                            {% for submission in submissions %}
+                            <div class="submission-item">
+                                <div class="submission-status status-{{ submission.status.lower().replace(' ', '-') }}">
+                                    <i class="fas fa-{{ 'check' if submission.status == 'Accepted' else 'times' }}"></i>
+                                    {{ submission.status }}
+                                </div>
+                                <div class="submission-details">
+                                    <span class="language">{{ submission.language }}</span>
+                                    <span class="time">{{ submission.submitted_at.strftime('%b %d, %Y %I:%M %p') }}</span>
+                                </div>
+                                <div class="submission-score">{{ submission.score }}pts</div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-submissions">
+                                <i class="fas fa-code"></i>
+                                <h4>No submissions yet</h4>
+                                <p>Start coding to see your submissions here</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Solutions Tab -->
+                <div id="solutions-tab" class="tab-content">
+                    <div class="solutions-placeholder">
+                        <i class="fas fa-lock"></i>
+                        <h4>Solutions Available After Solving</h4>
+                        <p>Submit a successful solution to unlock community solutions and editorial</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Code Editor Panel -->
+        <div class="editor-panel">
+            <div class="editor-header">
+                <div class="editor-controls">
+                    <div class="language-selector">
+                        <select id="languageSelect" onchange="changeLanguage()">
+                            <option value="python">Python</option>
+                            <option value="javascript">JavaScript</option>
+                            <option value="java">Java</option>
+                            <option value="cpp">C++</option>
+                        </select>
+                    </div>
+                    
+                    <div class="editor-actions">
+                        <button class="btn btn-secondary" onclick="runCode()">
+                            <i class="fas fa-play"></i>
+                            Run
+                        </button>
+                        <button class="btn btn-primary" onclick="submitCode()">
+                            <i class="fas fa-paper-plane"></i>
+                            Submit
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="editor-tabs">
+                    <button class="editor-tab active" onclick="showEditorTab('code')">
+                        <i class="fas fa-code"></i>
+                        Code
+                    </button>
+                    <button class="editor-tab" onclick="showEditorTab('console')">
+                        <i class="fas fa-terminal"></i>
+                        Console
+                    </button>
+                    <button class="editor-tab" onclick="showEditorTab('testcases')">
+                        <i class="fas fa-check-square"></i>
+                        Test Cases
+                    </button>
+                </div>
+            </div>
+            
+            <div class="editor-content">
+                <!-- Code Editor -->
+                <div id="code-tab" class="editor-tab-content active">
+                    <div id="codeEditor" class="code-editor"></div>
+                </div>
+                
+                <!-- Console -->
+                <div id="console-tab" class="editor-tab-content">
+                    <div class="console-container">
+                        <div class="console-header">
+                            <span>Console Output</span>
+                            <button class="btn btn-icon" onclick="clearConsole()">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        <div id="consoleOutput" class="console-output">
+                            <div class="console-placeholder">
+                                Run your code to see output here...
+                            </div>
+                        </div>
+                        <div class="console-input">
+                            <label for="testInput">Custom Input:</label>
+                            <textarea id="testInput" placeholder="Enter test input here..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Test Cases -->
+                <div id="testcases-tab" class="editor-tab-content">
+                    <div class="testcases-container">
+                        {% if test_cases %}
+                            {% for test_case in test_cases %}
+                            <div class="test-case" data-case-id="{{ test_case.id }}">
+                                <div class="test-case-header">
+                                    <span class="test-case-title">Test Case {{ loop.index }}</span>
+                                    <span class="test-case-status">
+                                        <i class="fas fa-circle"></i>
+                                    </span>
+                                </div>
+                                <div class="test-case-content">
+                                    <div class="test-input">
+                                        <h5>Input</h5>
+                                        <pre>{{ test_case.input_data }}</pre>
+                                    </div>
+                                    <div class="test-output">
+                                        <h5>Expected Output</h5>
+                                        <pre>{{ test_case.expected_output }}</pre>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="no-testcases">
+                                <i class="fas fa-vial"></i>
+                                <h4>No test cases available</h4>
+                                <p>Test cases will appear here when available</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Results Modal -->
+<div id="resultsModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="resultsTitle">Submission Results</h3>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div id="resultsContent"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let editor;
+let currentLanguage = 'python';
+
+// Initialize Monaco Editor
+require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' }});
+require(['vs/editor/editor.main'], function() {
+    editor = monaco.editor.create(document.getElementById('codeEditor'), {
+        value: getDefaultCode('python'),
+        language: 'python',
+        theme: 'vs-dark',
+        fontSize: 14,
+        minimap: { enabled: false },
+        scrollBeyondLastLine: false,
+        automaticLayout: true
+    });
+});
+
+function getDefaultCode(language) {
+    const templates = {
+        python: `def solution():
+    # Write your code here
+    pass
+
+# Test with sample input
+solution()`,
+        javascript: `function solution() {
+    // Write your code here
+}
+
+// Test with sample input
+solution();`,
+        java: `public class Solution {
+    public static void main(String[] args) {
+        // Write your code here
+    }
+}`,
+        cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    // Write your code here
+    return 0;
+}`
+    };
+    return templates[language] || templates.python;
+}
+
+function changeLanguage() {
+    const language = document.getElementById('languageSelect').value;
+    currentLanguage = language;
+    
+    const monacoLanguage = {
+        'python': 'python',
+        'javascript': 'javascript',
+        'java': 'java',
+        'cpp': 'cpp'
+    }[language];
+    
+    monaco.editor.setModelLanguage(editor.getModel(), monacoLanguage);
+    editor.setValue(getDefaultCode(language));
+}
+
+function showTab(tabName) {
+    // Hide all tabs
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Show selected tab
+    document.getElementById(tabName + '-tab').classList.add('active');
+    event.target.classList.add('active');
+}
+
+function showEditorTab(tabName) {
+    // Hide all editor tabs
+    document.querySelectorAll('.editor-tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    document.querySelectorAll('.editor-tab').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Show selected tab
+    document.getElementById(tabName + '-tab').classList.add('active');
+    event.target.classList.add('active');
+    
+    // Refresh editor layout if code tab is shown
+    if (tabName === 'code' && editor) {
+        setTimeout(() => editor.layout(), 100);
+    }
+}
+
+async function runCode() {
+    const code = editor.getValue();
+    const input = document.getElementById('testInput').value;
+    
+    if (!code.trim()) {
+        showConsoleOutput('Error: Please write some code first', 'error');
+        return;
+    }
+    
+    showConsoleOutput('Running code...', 'info');
+    showEditorTab('console');
+    
+    try {
+        const response = await fetch('/api/execute', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                code: code,
+                language: currentLanguage,
+                input: input
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.error) {
+            showConsoleOutput('Error: ' + result.error, 'error');
+        } else {
+            showConsoleOutput('Output:\n' + result.output, 'success');
+        }
+    } catch (error) {
+        showConsoleOutput('Network error: ' + error.message, 'error');
+    }
+}
+
+async function submitCode() {
+    const code = editor.getValue();
+    
+    if (!code.trim()) {
+        alert('Please write some code first');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                problem_id: {{ problem.id }},
+                code: code,
+                language: currentLanguage
+            })
+        });
+        
+        const result = await response.json();
+        showResults(result);
+    } catch (error) {
+        alert('Submission error: ' + error.message);
+    }
+}
+
+function showConsoleOutput(output, type = 'info') {
+    const consoleOutput = document.getElementById('consoleOutput');
+    const timestamp = new Date().toLocaleTimeString();
+    
+    consoleOutput.innerHTML = `
+        <div class="console-entry ${type}">
+            <span class="timestamp">[${timestamp}]</span>
+            <pre>${output}</pre>
+        </div>
+    `;
+}
+
+function clearConsole() {
+    document.getElementById('consoleOutput').innerHTML = `
+        <div class="console-placeholder">
+            Console cleared. Run your code to see output here...
+        </div>
+    `;
+}
+
+function showResults(result) {
+    const modal = document.getElementById('resultsModal');
+    const title = document.getElementById('resultsTitle');
+    const content = document.getElementById('resultsContent');
+    
+    const statusClass = result.status.toLowerCase().replace(' ', '-');
+    const statusIcon = result.status === 'Accepted' ? 'check-circle' : 'times-circle';
+    
+    title.innerHTML = `
+        <i class="fas fa-${statusIcon} status-${statusClass}"></i>
+        ${result.status}
+    `;
+    
+    content.innerHTML = `
+        <div class="results-summary">
+            <div class="result-item">
+                <span class="label">Status:</span>
+                <span class="value status-${statusClass}">${result.status}</span>
+            </div>
+            <div class="result-item">
+                <span class="label">Score:</span>
+                <span class="value">${result.score} / ${result.total_points} points</span>
+            </div>
+            <div class="result-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${(result.score / result.total_points) * 100}%"></div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    modal.style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('resultsModal').style.display = 'none';
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('resultsModal');
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}

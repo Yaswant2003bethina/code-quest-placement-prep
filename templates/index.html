@@ -1,0 +1,168 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="hero-background">
+        <div class="code-pattern"></div>
+    </div>
+    <div class="container">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    Master Coding Interviews
+                    <span class="gradient-text">Practice. Learn. Succeed.</span>
+                </h1>
+                <p class="hero-description">
+                    Comprehensive platform for placement preparation with real-time code execution, 
+                    detailed analytics, and curated problem sets from top companies.
+                </p>
+                <div class="hero-buttons">
+                    <a href="{{ url_for('register') }}" class="btn btn-primary btn-large">
+                        <i class="fas fa-rocket"></i>
+                        Start Practicing
+                    </a>
+                    <a href="{{ url_for('login') }}" class="btn btn-secondary btn-large">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Sign In
+                    </a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="code-editor-preview">
+                    <div class="editor-header">
+                        <div class="editor-tabs">
+                            <div class="tab active">Solution.py</div>
+                        </div>
+                        <div class="editor-actions">
+                            <button class="btn-icon"><i class="fas fa-play"></i></button>
+                        </div>
+                    </div>
+                    <div class="editor-content">
+                        <div class="line-numbers">
+                            <span>1</span>
+                            <span>2</span>
+                            <span>3</span>
+                            <span>4</span>
+                            <span>5</span>
+                        </div>
+                        <div class="code-lines">
+                            <div class="code-line">
+                                <span class="keyword">def</span> 
+                                <span class="function">two_sum</span><span class="bracket">(</span><span class="variable">nums</span><span class="bracket">,</span> <span class="variable">target</span><span class="bracket">):</span>
+                            </div>
+                            <div class="code-line">
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">seen</span> <span class="operator">=</span> <span class="bracket">{}</span>
+                            </div>
+                            <div class="code-line">
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">for</span> <span class="variable">i</span><span class="bracket">,</span> <span class="variable">num</span> <span class="keyword">in</span> <span class="function">enumerate</span><span class="bracket">(</span><span class="variable">nums</span><span class="bracket">):</span>
+                            </div>
+                            <div class="code-line">
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> <span class="variable">target</span> <span class="operator">-</span> <span class="variable">num</span> <span class="keyword">in</span> <span class="variable">seen</span><span class="bracket">:</span>
+                            </div>
+                            <div class="code-line">
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="bracket">[</span><span class="variable">seen</span><span class="bracket">[</span><span class="variable">target</span> <span class="operator">-</span> <span class="variable">num</span><span class="bracket">],</span> <span class="variable">i</span><span class="bracket">]</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="features-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Why Choose CodePlace?</h2>
+            <p>Everything you need to ace your coding interviews</p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h3>Real-time Code Execution</h3>
+                <p>Execute and test your code instantly with our powerful online compiler supporting multiple languages.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Progress Analytics</h3>
+                <p>Track your improvement with detailed analytics, performance metrics, and personalized insights.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <h3>Company-wise Problems</h3>
+                <p>Practice problems from top tech companies including Google, Microsoft, Amazon, and more.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Collaborative Learning</h3>
+                <p>Learn together with discussion forums, solution sharing, and peer code reviews.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3>Timed Challenges</h3>
+                <p>Simulate interview conditions with timed coding challenges and mock interviews.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h3>Study Resources</h3>
+                <p>Access comprehensive study materials, algorithms guides, and placement preparation resources.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="stats-section">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number">1000+</div>
+                <div class="stat-label">Coding Problems</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">10K+</div>
+                <div class="stat-label">Students Practicing</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">50+</div>
+                <div class="stat-label">Companies Covered</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">95%</div>
+                <div class="stat-label">Success Rate</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Ready to Start Your Journey?</h2>
+            <p>Join thousands of students who have successfully cracked their dream placements</p>
+            <a href="{{ url_for('register') }}" class="btn btn-primary btn-large">
+                <i class="fas fa-rocket"></i>
+                Get Started Now
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

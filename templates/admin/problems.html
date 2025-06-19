@@ -1,0 +1,174 @@
+
+{% extends "base.html" %}
+
+{% block title %}Manage Problems - CodePlace{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-header">
+        <div class="container">
+            <div class="admin-title">
+                <h1>Manage Problems</h1>
+                <p>Create, edit, and organize coding problems</p>
+            </div>
+            <div class="admin-actions">
+                <a href="{{ url_for('create_problem') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Create Problem
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="admin-content">
+            <div class="problems-table-container">
+                <table class="admin-table problems-table">
+                    <thead>
+                        <tr>
+                            <th>Problem</th>
+                            <th>Difficulty</th>
+                            <th>Category</th>
+                            <th>Created By</th>
+                            <th>Created</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for problem in problems %}
+                        <tr>
+                            <td>
+                                <div class="problem-info">
+                                    <h4>{{ problem.title }}</h4>
+                                    <p>{{ problem.description[:100] }}...</p>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="difficulty difficulty-{{ problem.difficulty.lower() }}">
+                                    {{ problem.difficulty }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if problem.category %}
+                                    <span class="category">{{ problem.category }}</span>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if problem.first_name %}
+                                    {{ problem.first_name }} {{ problem.last_name }}
+                                {% else %}
+                                    System
+                                {% endif %}
+                            </td>
+                            <td>{{ problem.created_at.strftime('%b %d, %Y') }}</td>
+                            <td>
+                                <span class="status status-{{ 'active' if problem.is_active else 'inactive' }}">
+                                    {{ 'Active' if problem.is_active else 'Inactive' }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{{ url_for('problem_detail', problem_id=problem.id) }}" 
+                                       class="btn btn-icon" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <button class="btn btn-icon" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-icon btn-danger" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.admin-container {
+    min-height: calc(100vh - 70px);
+    background: #f8fafc;
+}
+
+.admin-header {
+    background: white;
+    padding: 2rem 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.admin-title h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.admin-content {
+    padding: 2rem 0;
+}
+
+.problems-table-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+}
+
+.problems-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.problems-table th,
+.problems-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.problems-table th {
+    background: #f8fafc;
+    font-weight: 600;
+    color: #374151;
+}
+
+.problem-info h4 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.problem-info p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-danger {
+    color: #ef4444;
+    border-color: #fecaca;
+}
+
+.btn-danger:hover {
+    background: #fecaca;
+    color: #dc2626;
+}
+
+.text-muted {
+    color: #9ca3af;
+}
+</style>
+{% endblock %}

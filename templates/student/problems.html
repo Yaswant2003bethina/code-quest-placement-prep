@@ -1,0 +1,175 @@
+
+{% extends "base.html" %}
+
+{% block title %}Problems - CodePlace{% endblock %}
+
+{% block content %}
+<div class="problems-container">
+    <div class="problems-header">
+        <div class="container">
+            <div class="problems-title">
+                <h1>Coding Problems</h1>
+                <p>Practice with {{ problems|length }} carefully curated problems</p>
+            </div>
+            
+            <div class="problems-filters">
+                <form method="GET" class="filter-form">
+                    <div class="filter-group">
+                        <label for="difficulty">Difficulty</label>
+                        <select name="difficulty" id="difficulty" onchange="this.form.submit()">
+                            <option value="">All Levels</option>
+                            <option value="Easy" {{ 'selected' if request.args.get('difficulty') == 'Easy' }}>Easy</option>
+                            <option value="Medium" {{ 'selected' if request.args.get('difficulty') == 'Medium' }}>Medium</option>
+                            <option value="Hard" {{ 'selected' if request.args.get('difficulty') == 'Hard' }}>Hard</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="category">Category</label>
+                        <select name="category" id="category" onchange="this.form.submit()">
+                            <option value="">All Categories</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat.category }}" {{ 'selected' if request.args.get('category') == cat.category }}>
+                                    {{ cat.category }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <input type="text" placeholder="Search problems..." class="search-input">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="problems-content">
+            <!-- Stats Summary -->
+            <div class="problems-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Total</span>
+                    <span class="stat-value">{{ problems|length }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Easy</span>
+                    <span class="stat-value easy">{{ problems|selectattr('difficulty', 'equalto', 'Easy')|list|length }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Medium</span>
+                    <span class="stat-value medium">{{ problems|selectattr('difficulty', 'equalto', 'Medium')|list|length }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Hard</span>
+                    <span class="stat-value hard">{{ problems|selectattr('difficulty', 'equalto', 'Hard')|list|length }}</span>
+                </div>
+            </div>
+            
+            <!-- Problems List -->
+            <div class="problems-list">
+                {% for problem in problems %}
+                <div class="problem-card" onclick="window.location.href='{{ url_for('problem_detail', problem_id=problem.id) }}'">
+                    <div class="problem-status">
+                        <i class="fas fa-circle status-unsolved"></i>
+                    </div>
+                    
+                    <div class="problem-content">
+                        <div class="problem-header">
+                            <h3 class="problem-title">{{ problem.title }}</h3>
+                            <div class="problem-meta">
+                                <span class="difficulty difficulty-{{ problem.difficulty.lower() }}">
+                                    {{ problem.difficulty }}
+                                </span>
+                                {% if problem.category %}
+                                    <span class="category">{{ problem.category }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="problem-description">
+                            {{ problem.description[:150] }}{% if problem.description|length > 150 %}...{% endif %}
+                        </div>
+                        
+                        {% if problem.tags %}
+                        <div class="problem-tags">
+                            {% for tag in problem.tags.split(',') %}
+                                <span class="tag">{{ tag.strip() }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="problem-actions">
+                        <div class="problem-stats">
+                            <span class="acceptance-rate">65% Acceptance</span>
+                            <span class="submissions">234 Submissions</span>
+                        </div>
+                        <button class="btn btn-primary btn-small">
+                            <i class="fas fa-code"></i>
+                            Solve
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                {% if not problems %}
+                <div class="empty-state">
+                    <i class="fas fa-search"></i>
+                    <h3>No problems found</h3>
+                    <p>Try adjusting your filters or search terms</p>
+                    <a href="{{ url_for('problems') }}" class="btn btn-primary">
+                        Clear Filters
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Search functionality
+document.querySelector('.search-input').addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const problemCards = document.querySelectorAll('.problem-card');
+    
+    problemCards.forEach(card => {
+        const title = card.querySelector('.problem-title').textContent.toLowerCase();
+        const description = card.querySelector('.problem-description').textContent.toLowerCase();
+        const tags = card.querySelector('.problem-tags')?.textContent.toLowerCase() || '';
+        
+        if (title.includes(searchTerm) || description.includes(searchTerm) || tags.includes(searchTerm)) {
+            card.style.display = 'flex';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+});
+
+// Animate problem cards on scroll
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
+
+document.querySelectorAll('.problem-card').forEach(card => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(card);
+});
+</script>
+{% endblock %}
