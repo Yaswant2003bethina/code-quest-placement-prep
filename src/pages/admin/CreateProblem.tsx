@@ -26,6 +26,7 @@ export default function CreateProblem() {
     description: '',
     difficulty: '',
     category: '',
+    module: '',
     tags: '',
     constraints: '',
     inputFormat: '',
@@ -38,6 +39,16 @@ export default function CreateProblem() {
   const [testCases, setTestCases] = useState<TestCase[]>([
     { id: '1', input: '', expectedOutput: '', isHidden: false }
   ]);
+
+  const modules = [
+    'Basic Programming',
+    'Data Structures',
+    'Algorithms',
+    'Dynamic Programming',
+    'Graph Theory',
+    'Mathematics',
+    'String Processing'
+  ];
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -64,7 +75,7 @@ export default function CreateProblem() {
     e.preventDefault();
     
     // Validate required fields
-    if (!formData.title || !formData.description || !formData.difficulty) {
+    if (!formData.title || !formData.description || !formData.difficulty || !formData.module) {
       toast.error('Please fill in all required fields');
       return;
     }
@@ -87,16 +98,6 @@ export default function CreateProblem() {
     }
   };
 
-  const handleSaveDraft = async () => {
-    try {
-      // Simulate saving draft
-      await new Promise(resolve => setTimeout(resolve, 500));
-      toast.success('Draft saved successfully!');
-    } catch (error) {
-      toast.error('Failed to save draft');
-    }
-  };
-
   return (
     <ProtectedRoute requireAdmin>
       <div className="min-h-screen bg-background">
@@ -113,13 +114,7 @@ export default function CreateProblem() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">Create New Problem</h1>
-                <p className="text-gray-600 mt-2">Add a new coding problem for students to solve</p>
-              </div>
-              <div className="flex space-x-3">
-                <Button variant="outline" onClick={handleSaveDraft}>
-                  <Save className="h-4 w-4 mr-2" />
-                  Save Draft
-                </Button>
+                <p className="text-gray-600 mt-2">Add a new coding problem with modular organization</p>
               </div>
             </div>
           </div>
@@ -158,6 +153,20 @@ export default function CreateProblem() {
                   </div>
 
                   <div>
+                    <Label htmlFor="module">Module *</Label>
+                    <Select value={formData.module} onValueChange={(value) => handleInputChange('module', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select module" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {modules.map(module => (
+                          <SelectItem key={module} value={module}>{module}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
                     <Label htmlFor="category">Category</Label>
                     <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
                       <SelectTrigger>
@@ -166,25 +175,22 @@ export default function CreateProblem() {
                       <SelectContent>
                         <SelectItem value="Array">Array</SelectItem>
                         <SelectItem value="String">String</SelectItem>
-                        <SelectItem value="Linked List">Linked List</SelectItem>
-                        <SelectItem value="Tree">Tree</SelectItem>
-                        <SelectItem value="Graph">Graph</SelectItem>
-                        <SelectItem value="Dynamic Programming">Dynamic Programming</SelectItem>
-                        <SelectItem value="Sorting">Sorting</SelectItem>
-                        <SelectItem value="Searching">Searching</SelectItem>
+                        <SelectItem value="Math">Math</SelectItem>
+                        <SelectItem value="Search">Search</SelectItem>
+                        <SelectItem value="Sort">Sort</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
+                </div>
 
-                  <div>
-                    <Label htmlFor="tags">Tags</Label>
-                    <Input
-                      id="tags"
-                      value={formData.tags}
-                      onChange={(e) => handleInputChange('tags', e.target.value)}
-                      placeholder="e.g., Array, Hash Table"
-                    />
-                  </div>
+                <div>
+                  <Label htmlFor="tags">Tags</Label>
+                  <Input
+                    id="tags"
+                    value={formData.tags}
+                    onChange={(e) => handleInputChange('tags', e.target.value)}
+                    placeholder="e.g., Array, Hash Table"
+                  />
                 </div>
 
                 <div>
@@ -197,49 +203,6 @@ export default function CreateProblem() {
                     className="min-h-[120px]"
                     required
                   />
-                </div>
-
-                <div>
-                  <Label htmlFor="constraints">Constraints</Label>
-                  <Textarea
-                    id="constraints"
-                    value={formData.constraints}
-                    onChange={(e) => handleInputChange('constraints', e.target.value)}
-                    placeholder="e.g., 1 ≤ n ≤ 10^5"
-                    className="min-h-[80px]"
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Input/Output Format */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Input/Output Format</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <Label htmlFor="inputFormat">Input Format</Label>
-                    <Textarea
-                      id="inputFormat"
-                      value={formData.inputFormat}
-                      onChange={(e) => handleInputChange('inputFormat', e.target.value)}
-                      placeholder="Describe the input format..."
-                      className="min-h-[100px]"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="outputFormat">Output Format</Label>
-                    <Textarea
-                      id="outputFormat"
-                      value={formData.outputFormat}
-                      onChange={(e) => handleInputChange('outputFormat', e.target.value)}
-                      placeholder="Describe the output format..."
-                      className="min-h-[100px]"
-                    />
-                  </div>
                 </div>
               </CardContent>
             </Card>

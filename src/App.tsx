@@ -10,6 +10,7 @@ import Problems from './pages/student/Problems';
 import ProblemDetail from './pages/student/ProblemDetail';
 import AdminProblems from './pages/admin/AdminProblems';
 import CreateProblem from './pages/admin/CreateProblem';
+import Leaderboard from './pages/Leaderboard';
 import NotFound from './pages/NotFound';
 import { AuthProvider } from './contexts/AuthContext';
 
@@ -28,6 +29,7 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/problems" element={<Problems />} />
               <Route path="/problem/:id" element={<ProblemDetail />} />
+              <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/admin/problems" element={<AdminProblems />} />
               <Route path="/admin/problem/create" element={<CreateProblem />} />
               <Route path="*" element={<NotFound />} />
